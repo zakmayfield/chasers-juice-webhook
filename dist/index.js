@@ -5,21 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const nodemailer_1 = __importDefault(require("nodemailer"));
 const middleware_1 = require("./middleware");
+const utils_1 = require("./utils");
 dotenv_1.default.config();
 const PORT = process.env.PORT || 8000;
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(middleware_1.validateDomain);
-const transporter = nodemailer_1.default.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.USERNAME,
-        pass: process.env.GMAIL_APP_PASSWORD,
-    },
-});
 app.get('/', (req, res) => {
     res.status(200).json({
         message: `Hi there. 👋`,
@@ -31,7 +24,7 @@ app.post('/email', (req, res) => {
     const isEmptyObject = (obj) => (Object.keys(obj).length === 0 ? true : false);
     if (isEmptyObject(data)) {
         res.status(400).json({
-            error: `Send better data, you're probably missing something`,
+            error: `Try sending some data.`,
         });
     }
     const mailOptions = {
@@ -47,7 +40,7 @@ app.post('/email', (req, res) => {
       message: ${data.message}
     `,
     };
-    transporter.sendMail(mailOptions, (error, info) => {
+    utils_1.transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log(error);
             res.status(500).send(`Error sending email. :(`);

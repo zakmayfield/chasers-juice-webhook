@@ -1,8 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import nodemailer from 'nodemailer';
 import { ContactFormValues } from './types';
 import { validateDomain } from './middleware';
+import { transporter } from './utils';
 
 dotenv.config();
 
@@ -12,14 +12,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(validateDomain);
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.USERNAME,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -35,7 +27,7 @@ app.post('/email', (req, res) => {
 
   if (isEmptyObject(data)) {
     res.status(400).json({
-      error: `Send better data, you're probably missing something`,
+      error: `Try sending some data.`,
     });
   }
 

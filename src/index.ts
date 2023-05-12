@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
+import { ContactFormValues } from './types';
+import { validateDomain } from './middleware';
 
 dotenv.config();
 
@@ -9,6 +11,7 @@ const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(validateDomain);
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -17,16 +20,6 @@ const transporter = nodemailer.createTransport({
     pass: process.env.GMAIL_APP_PASSWORD,
   },
 });
-
-interface ContactFormValues {
-  name: string;
-  company: string;
-  phone: string;
-  email: string;
-  found: string;
-  foundOtherDesc?: string;
-  message: string;
-}
 
 app.get('/', (req, res) => {
   res.status(200).json({

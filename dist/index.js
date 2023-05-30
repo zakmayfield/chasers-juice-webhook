@@ -43,14 +43,51 @@ app.post('/email', async (req, res) => {
             });
         }
         else {
-            return res.status(400).json({
-                message: 'Robot 🤖',
-            });
+            // Check for specific error codes or error reasons
+            if (response.data['error-codes']) {
+                // Handle specific error codes
+                const errorCodes = response.data['error-codes'];
+                switch (true) {
+                    case errorCodes.includes('missing-input-secret'):
+                        return res.status(400).json({
+                            message: 'The secret parameter is missing.',
+                        });
+                    case errorCodes.includes('invalid-input-secret'):
+                        return res.status(400).json({
+                            message: 'The secret parameter is invalid or malformed.',
+                        });
+                    case errorCodes.includes('missing-input-response'):
+                        return res.status(400).json({
+                            message: 'The response parameter is missing.',
+                        });
+                    case errorCodes.includes('invalid-input-response'):
+                        return res.status(400).json({
+                            message: 'The response parameter is invalid or malformed.',
+                        });
+                    default:
+                        return res.status(400).json({
+                            message: 'Failed reCAPTCHA check.',
+                        });
+                }
+            }
+            else if (response.data['error']) {
+                // Handle general errors
+                return res.status(400).json({
+                    message: response.data['error'],
+                });
+            }
+            else {
+                return res.status(400).json({
+                    message: 'Failed reCAPTCHA check.',
+                });
+            }
         }
     }
     catch (error) {
-        console.error(error);
-        return res.status(500).send('Error verifying reCAPTCHA');
+        // Handle network or other errors
+        return res.status(500).json({
+            message: 'An error occurred while verifying reCAPTCHA.',
+        });
     }
     const mailOptions = {
         from: process.env.USERNAME,

@@ -30,7 +30,7 @@ app.post('/email', async (req, res) => {
 
   if (isEmptyObject(data)) {
     return res.status(400).json({
-      error: `Try sending some data.`,
+      error: `Try sending some data`,
     });
   }
 
@@ -39,7 +39,7 @@ app.post('/email', async (req, res) => {
 
   if (!token) {
     return res.status(400).json({
-      error: 'reCAPTCHA token required.',
+      error: 'reCAPTCHA token required',
     });
   }
 
@@ -61,27 +61,27 @@ app.post('/email', async (req, res) => {
         switch (true) {
           case errorCodes.includes('missing-input-secret'):
             return res.status(400).json({
-              message: 'The secret parameter is missing.',
+              message: 'The secret parameter is missing',
             });
 
           case errorCodes.includes('invalid-input-secret'):
             return res.status(400).json({
-              message: 'The secret parameter is invalid or malformed.',
+              message: 'The secret parameter is invalid or malformed',
             });
 
           case errorCodes.includes('missing-input-response'):
             return res.status(400).json({
-              message: 'The response parameter is missing.',
+              message: 'The response parameter is missing',
             });
 
           case errorCodes.includes('invalid-input-response'):
             return res.status(400).json({
-              message: 'The response parameter is invalid or malformed.',
+              message: 'The response parameter is invalid or malformed',
             });
 
           default:
             return res.status(400).json({
-              message: 'Failed reCAPTCHA check.',
+              message: 'Failed reCAPTCHA check',
             });
         }
       } else if (response.data['error']) {
@@ -91,14 +91,14 @@ app.post('/email', async (req, res) => {
         });
       } else {
         return res.status(400).json({
-          message: 'Failed reCAPTCHA check.',
+          message: 'Failed reCAPTCHA check',
         });
       }
     }
   } catch (error) {
     // Handle network or other errors
     return res.status(500).json({
-      message: 'An error occurred while verifying reCAPTCHA.',
+      message: 'An error occurred while verifying reCAPTCHA',
     });
   }
 
@@ -120,7 +120,7 @@ app.post('/email', async (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log(error);
-      res.status(500).send(`Error sending email. :(`);
+      res.status(500).send(`Error sending email :(`);
     } else {
       res.status(200).send(`Email sent successfully! :)`);
     }

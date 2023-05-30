@@ -29,7 +29,7 @@ app.post('/email', async (req, res) => {
   const isEmptyObject = (obj) => (Object.keys(obj).length === 0 ? true : false);
 
   if (isEmptyObject(data)) {
-    res.status(400).json({
+    return res.status(400).json({
       error: `Try sending some data.`,
     });
   }
@@ -38,7 +38,7 @@ app.post('/email', async (req, res) => {
     data;
 
   if (!token) {
-    res.status(400).json({
+    return res.status(400).json({
       error: 'reCAPTCHA token required.',
     });
   }
@@ -48,20 +48,18 @@ app.post('/email', async (req, res) => {
       `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
     );
 
-    // console.log('----- response -----', response.data);
-
     if (response.data.success) {
       res.json({
         message: 'Human 👨 👩',
       });
     } else {
-      res.status(401).json({
+      return res.status(400).json({
         message: 'Robot 🤖',
       });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error verifying reCAPTCHA');
+    return res.status(500).send('Error verifying reCAPTCHA');
   }
 
   const mailOptions = {

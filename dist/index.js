@@ -25,34 +25,32 @@ app.post('/email', async (req, res) => {
     const data = req.body;
     const isEmptyObject = (obj) => (Object.keys(obj).length === 0 ? true : false);
     if (isEmptyObject(data)) {
-        res.status(400).json({
+        return res.status(400).json({
             error: `Try sending some data.`,
         });
     }
     const { name, company, phone, email, found, foundOtherDesc, message, token } = data;
     if (!token) {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'reCAPTCHA token required.',
         });
     }
-    console.log('----- token -----', token);
     try {
         const response = await axios_1.default.post(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`);
-        console.log('----- response -----', response.data);
         if (response.data.success) {
             res.json({
                 message: 'Human 👨 👩',
             });
         }
         else {
-            res.json({
+            return res.status(400).json({
                 message: 'Robot 🤖',
             });
         }
     }
     catch (error) {
         console.error(error);
-        res.status(500).send('Error verifying reCAPTCHA');
+        return res.status(500).send('Error verifying reCAPTCHA');
     }
     const mailOptions = {
         from: process.env.USERNAME,

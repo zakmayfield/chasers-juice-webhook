@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const utils_1 = require("./utils");
+const axios_1 = __importDefault(require("axios"));
 dotenv_1.default.config();
 const PORT = process.env.PORT || 8000;
 const app = (0, express_1.default)();
@@ -20,7 +21,7 @@ app.get('/', (req, res) => {
     });
 });
 // TODO: consider sending a csv of the user submitted data, if possible. this could allow easy data transfer from contact form to ordering
-app.post('/email', (req, res) => {
+app.post('/email', async (req, res) => {
     const data = req.body;
     const isEmptyObject = (obj) => (Object.keys(obj).length === 0 ? true : false);
     if (isEmptyObject(data)) {
@@ -28,7 +29,33 @@ app.post('/email', (req, res) => {
             error: `Try sending some data.`,
         });
     }
+    const { name, company, phone, email, found, foundOtherDesc, message, token } = data;
+    if (!token) {
+        res.status(400).json({
+            error: 'reCAPTCHA token required.',
+        });
+    }
+    console.log('----- token -----', token);
+    try {
+        const response = await axios_1.default.post(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`);
+        console.log('----- response -----', response.data);
+        if (response.data.success) {
+            res.json({
+                message: 'Human 👨 👩',
+            });
+        }
+        else {
+            res.json({
+                message: 'Robot 🤖',
+            });
+        }
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Error verifying reCAPTCHA');
+    }
     const mailOptions = {
+        from: process.env.USERNAME,
         to: process.env.ADDRESS,
         subject: `${data.company} | contact`,
         text: `
@@ -47,7 +74,6 @@ app.post('/email', (req, res) => {
             res.status(500).send(`Error sending email. :(`);
         }
         else {
-            console.log(`Email sent:`, info.response);
             res.status(200).send(`Email sent successfully! :)`);
         }
     });

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { ContactFormValues } from './types';
 import { validateDomain } from './middleware';
 import { transporter } from './utils';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ app.get('/', (req, res) => {
 
 // TODO: consider sending a csv of the user submitted data, if possible. this could allow easy data transfer from contact form to ordering
 
-app.post('/email', (req, res) => {
+app.post('/email', async (req, res) => {
   const data: ContactFormValues = req.body;
   const isEmptyObject = (obj) => (Object.keys(obj).length === 0 ? true : false);
 
@@ -33,7 +34,38 @@ app.post('/email', (req, res) => {
     });
   }
 
+  const { name, company, phone, email, found, foundOtherDesc, message, token } =
+    data;
+
+  if (!token) {
+    res.status(400).json({
+      error: 'reCAPTCHA token required.',
+    });
+  }
+
+  try {
+    const response = await axios.post(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
+    );
+
+    // console.log('----- response -----', response.data);
+
+    if (response.data.success) {
+      res.json({
+        message: 'Human 👨 👩',
+      });
+    } else {
+      res.status(401).json({
+        message: 'Robot 🤖',
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error verifying reCAPTCHA');
+  }
+
   const mailOptions = {
+    from: process.env.USERNAME,
     to: process.env.ADDRESS,
     subject: `${data.company} | contact`,
     text: `
@@ -52,7 +84,6 @@ app.post('/email', (req, res) => {
       console.log(error);
       res.status(500).send(`Error sending email. :(`);
     } else {
-      console.log(`Email sent:`, info.response);
       res.status(200).send(`Email sent successfully! :)`);
     }
   });

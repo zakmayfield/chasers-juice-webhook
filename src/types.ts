@@ -6,4 +6,5 @@ export interface ContactFormValues {
   found: string;
   foundOtherDesc?: string;
   message: string;
+  token: string;
 }

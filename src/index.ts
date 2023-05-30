@@ -114,7 +114,7 @@ app.post('/email', async (req, res) => {
     Found: ${found}
     ${foundOtherDesc ? `Found other: ${foundOtherDesc}` : ''}
     Message: ${message}
-  `,
+  `.trim(),
   };
 
   transporter.sendMail(mailOptions, (error, info) => {

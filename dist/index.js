@@ -26,13 +26,13 @@ app.post('/email', async (req, res) => {
     const isEmptyObject = (obj) => (Object.keys(obj).length === 0 ? true : false);
     if (isEmptyObject(data)) {
         return res.status(400).json({
-            error: `Try sending some data.`,
+            error: `Try sending some data`,
         });
     }
     const { name, company, phone, email, found, foundOtherDesc, message, token } = data;
     if (!token) {
         return res.status(400).json({
-            error: 'reCAPTCHA token required.',
+            error: 'reCAPTCHA token required',
         });
     }
     try {
@@ -50,23 +50,23 @@ app.post('/email', async (req, res) => {
                 switch (true) {
                     case errorCodes.includes('missing-input-secret'):
                         return res.status(400).json({
-                            message: 'The secret parameter is missing.',
+                            message: 'The secret parameter is missing',
                         });
                     case errorCodes.includes('invalid-input-secret'):
                         return res.status(400).json({
-                            message: 'The secret parameter is invalid or malformed.',
+                            message: 'The secret parameter is invalid or malformed',
                         });
                     case errorCodes.includes('missing-input-response'):
                         return res.status(400).json({
-                            message: 'The response parameter is missing.',
+                            message: 'The response parameter is missing',
                         });
                     case errorCodes.includes('invalid-input-response'):
                         return res.status(400).json({
-                            message: 'The response parameter is invalid or malformed.',
+                            message: 'The response parameter is invalid or malformed',
                         });
                     default:
                         return res.status(400).json({
-                            message: 'Failed reCAPTCHA check.',
+                            message: 'Failed reCAPTCHA check',
                         });
                 }
             }
@@ -78,7 +78,7 @@ app.post('/email', async (req, res) => {
             }
             else {
                 return res.status(400).json({
-                    message: 'Failed reCAPTCHA check.',
+                    message: 'Failed reCAPTCHA check',
                 });
             }
         }
@@ -86,7 +86,7 @@ app.post('/email', async (req, res) => {
     catch (error) {
         // Handle network or other errors
         return res.status(500).json({
-            message: 'An error occurred while verifying reCAPTCHA.',
+            message: 'An error occurred while verifying reCAPTCHA',
         });
     }
     const mailOptions = {
@@ -94,19 +94,19 @@ app.post('/email', async (req, res) => {
         to: process.env.ADDRESS,
         subject: `${data.company} | contact`,
         text: `
-      Name: ${data.name}
-      Company: ${data.company}
-      Phone: ${data.phone}
-      Email: ${data.email}
-      found: ${data.found}
-      foundOtherDesc: ${data.foundOtherDesc ? data.foundOtherDesc : 'N/A'}
-      message: ${data.message}
+      Name: ${name}
+      Company: ${company}
+      Phone: ${phone}
+      Email: ${email}
+      Found: ${found}
+      ${foundOtherDesc && `Found other: ${foundOtherDesc}`}
+      Message: ${message}
     `,
     };
     utils_1.transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log(error);
-            res.status(500).send(`Error sending email. :(`);
+            res.status(500).send(`Error sending email :(`);
         }
         else {
             res.status(200).send(`Email sent successfully! :)`);

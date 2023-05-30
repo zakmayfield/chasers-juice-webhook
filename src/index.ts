@@ -107,13 +107,13 @@ app.post('/email', async (req, res) => {
     to: process.env.ADDRESS,
     subject: `${data.company} | contact`,
     text: `
-      Name: ${data.name}
-      Company: ${data.company}
-      Phone: ${data.phone}
-      Email: ${data.email}
-      found: ${data.found}
-      foundOtherDesc: ${data.foundOtherDesc ? data.foundOtherDesc : 'N/A'}
-      message: ${data.message}
+      Name: ${name}
+      Company: ${company}
+      Phone: ${phone}
+      Email: ${email}
+      Found: ${found}
+      ${foundOtherDesc && `Found other: ${foundOtherDesc}`}
+      Message: ${message}
     `,
   };
 

@@ -93,15 +93,24 @@ app.post('/email', async (req, res) => {
         from: process.env.USERNAME,
         to: process.env.ADDRESS,
         subject: `${data.company} | contact`,
-        text: `
+        text: foundOtherDesc
+            ? `
     Name: ${name}
     Company: ${company}
     Phone: ${phone}
     Email: ${email}
     Found: ${found}
-    ${foundOtherDesc ? `Found other: ${foundOtherDesc}` : ''}
+    Found other: ${foundOtherDesc}
     Message: ${message}
-  `.trim(),
+  `
+            : `
+    Name: ${name}
+    Company: ${company}
+    Phone: ${phone}
+    Email: ${email}
+    Found: ${found}
+    Message: ${message}
+  `,
     };
     utils_1.transporter.sendMail(mailOptions, (error, info) => {
         if (error) {

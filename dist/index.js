@@ -194,14 +194,14 @@ app.post('/request-account', async (req, res) => {
         to: process.env.NODEMAILER_SEND_TO_ADDRESS,
         subject: `${data.companyName} | Request Account`,
         text: `
-      companyName: ${companyName},
-      contact: ${contact},
-      billingAddress: ${billingAddress},
-      shippingAddress: ${shippingAddress},
-      phone: ${phone},
-      email: ${email},
-      apEmail: ${apEmail},
-      paymentMethod: ${paymentMethod},
+      Company Name: ${companyName},
+      Contact: ${contact},
+      Billing Address: ${billingAddress},
+      Shipping Address: ${shippingAddress},
+      Phone: ${phone},
+      Email: ${email},
+      A/P Email: ${apEmail},
+      Payment Method: ${paymentMethod},
   `,
     };
     utils_1.transporter.sendMail(mailOptions, (error, info) => {

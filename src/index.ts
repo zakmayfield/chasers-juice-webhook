@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { ContactFormValues, RequestAccountFormValues } from './types';
-import { validateDomain } from './middleware';
 import { transporter } from './utils';
 import axios from 'axios';
 
@@ -14,7 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(validateDomain);
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -136,6 +134,7 @@ app.post('/email', async (req, res) => {
 
 app.post('/request-account', async (req, res) => {
   const data: RequestAccountFormValues = req.body;
+  console.log('request-account:log', data);
   const isEmptyObject = (obj) => (Object.keys(obj).length === 0 ? true : false);
 
   if (isEmptyObject(data)) {
@@ -224,9 +223,9 @@ app.post('/request-account', async (req, res) => {
   const mailOptions = {
     from: process.env.USERNAME,
     to: process.env.ADDRESS,
-    subject: `${data.companyName} | contact`,
+    subject: `${data.companyName} | Request Account`,
     text: `
-     companyName: ${companyName},
+      companyName: ${companyName},
       contact: ${contact},
       billingAddress: ${billingAddress},
       shippingAddress: ${shippingAddress},

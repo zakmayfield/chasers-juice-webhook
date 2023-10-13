@@ -88,8 +88,8 @@ app.post('/email', async (req, res) => {
         });
     }
     const mailOptions = {
-        from: process.env.USERNAME,
-        to: process.env.ADDRESS,
+        to: process.env.NODEMAILER_SEND_TO_ADDRESS,
+        from: process.env.NODEMAILER_SEND_FROM_ADDRESS,
         subject: `${data.company} | contact`,
         text: foundOtherDesc
             ? `
@@ -190,8 +190,8 @@ app.post('/request-account', async (req, res) => {
         });
     }
     const mailOptions = {
-        from: process.env.NODEMAILER_SEND_FROM_ADDRESS,
         to: process.env.NODEMAILER_SEND_TO_ADDRESS,
+        from: process.env.NODEMAILER_SEND_FROM_ADDRESS,
         subject: `${data.companyName} | Request Account`,
         text: `
       Company Name: ${companyName},

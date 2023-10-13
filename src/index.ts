@@ -41,7 +41,7 @@ app.post('/email', async (req, res) => {
 
   try {
     const response = await axios.post(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_CONTACT_SECRET_KEY}&response=${token}`
     );
 
     if (response.data.success) {
@@ -99,8 +99,8 @@ app.post('/email', async (req, res) => {
   }
 
   const mailOptions = {
-    from: process.env.USERNAME,
-    to: process.env.ADDRESS,
+    to: process.env.NODEMAILER_SEND_TO_ADDRESS,
+    from: process.env.NODEMAILER_SEND_FROM_ADDRESS,
     subject: `${data.company} | contact`,
     text: foundOtherDesc
       ? `
@@ -163,7 +163,7 @@ app.post('/request-account', async (req, res) => {
 
   try {
     const response = await axios.post(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_REQUEST_ACCOUNT_SECRET_KEY}&response=${token}`
     );
 
     if (response.data.success) {
@@ -221,18 +221,18 @@ app.post('/request-account', async (req, res) => {
   }
 
   const mailOptions = {
-    from: process.env.USERNAME,
-    to: process.env.ADDRESS,
+    to: process.env.NODEMAILER_SEND_TO_ADDRESS,
+    from: process.env.NODEMAILER_SEND_FROM_ADDRESS,
     subject: `${data.companyName} | Request Account`,
     text: `
-      companyName: ${companyName},
-      contact: ${contact},
-      billingAddress: ${billingAddress},
-      shippingAddress: ${shippingAddress},
-      phone: ${phone},
-      email: ${email},
-      apEmail: ${apEmail},
-      paymentMethod: ${paymentMethod},
+      Company Name: ${companyName},
+      Contact: ${contact},
+      Billing Address: ${billingAddress},
+      Shipping Address: ${shippingAddress},
+      Phone: ${phone},
+      Email: ${email},
+      A/P Email: ${apEmail},
+      Payment Method: ${paymentMethod},
   `,
   };
 
